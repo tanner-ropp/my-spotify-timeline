@@ -116,12 +116,18 @@ class App extends Component {
         <div className="App">
             <header className="stickyHeader">
                 <h1 className="header-brand">My Music Timeline</h1>
-                <div className="header-profile">{this.state.displayName}<img src={this.state.profileImage} height="40px"/></div>
+                <div>INSERT NOW PLAYING SECTION</div>
+                <div className="header-profile">
+                    <div className="displayName">{this.state.displayName}</div>
+                    <div className="imageCropper"><img src={this.state.profileImage} height="50px"/></div>
+                </div>
             </header>
             <div className="body">
-                <a href="http://localhost:8888">
-                    <button style={{background: '#1DB954'}}>Login to Spotify</button>
-                </a>
+                {!this.state.loggedIn &&
+                    <a href="http://localhost:8888">
+                        <button style={{background: '#1DB954'}}>Login to Spotify</button>
+                    </a>
+                }
                 {releaseList}
             </div>
         </div>
