@@ -15,7 +15,9 @@ class App extends Component {
         artists : [], // just artists
         artistAlbums : [], // albums grouped by artist,
         artistReleases : [],
-        userDataReceived : false // used to control rendering
+        userDataReceived : false, // used to control rendering,
+        displayName: "",
+        profileImage: ""
     }
 
     if (params.access_token) {
@@ -50,6 +52,8 @@ class App extends Component {
       //spotifyWebApi.play({});
 
       if (this.state.loggedIn) {
+          spotifyWebApi.getMe().then((response) => {this.setState({displayName: response.display_name, profileImage: response.images[0].url})})
+
           spotifyWebApi.getFollowedArtists({limit:20}) // WHAT IF YOU HAVE MORE THAN 50 FOLLOWED ARTISTS?
           .then((response) => { // waits for artists followed
               this.setState({
@@ -110,12 +114,16 @@ class App extends Component {
 
       return (
         <div className="App">
-          <a href="http://localhost:8888">
-            <button style={{background: '#1DB954'}}>Login to Spotify</button>
-          </a>
-          <div>
-              {releaseList}
-          </div>
+            <header className="stickyHeader">
+                <h1 className="header-brand">My Music Timeline</h1>
+                <div className="header-profile">{this.state.displayName}<img src={this.state.profileImage} height="40px"/></div>
+            </header>
+            <div className="body">
+                <a href="http://localhost:8888">
+                    <button style={{background: '#1DB954'}}>Login to Spotify</button>
+                </a>
+                {releaseList}
+            </div>
         </div>
       );
   }
