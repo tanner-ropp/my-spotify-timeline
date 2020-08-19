@@ -5,9 +5,6 @@ import ReleaseCard from './components/ReleaseCard.js'
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 const spotifyWebApi = new Spotify();
-//const BACKEND_PORT = process.env.PORT || 8888;
-//const calendar = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-//const today = new Date();
 
 class App extends Component {
   constructor(props) {
@@ -26,23 +23,19 @@ class App extends Component {
         hasMore: true,
         nowPlaying: {}
     }
-
+    console.log("construct");
     if (params.access_token && (params.state === localStorage.getItem('auth_state'))) {
         spotifyWebApi.setAccessToken(params.access_token);
-        localStorage.removeItem('auth_state');
-        console.log("hmm")
+        //localStorage.removeItem('auth_state');
+        console.log("Authorization successful!")
     }
 
-    console.log("constructor");
-    console.log(process.env.REACT_APP_SPOTIFY_CLIENT_ID + 'hhh');
     this.fetchData = this.fetchData.bind(this);
     this.tick = this.tick.bind(this);
   }
 
   componentDidMount() {
-      console.log(process.env.REACT_APP_SPOTIFY_CLIENT_ID);
       if (this.state.loggedIn) {
-          console.log("logged in did mount")
           spotifyWebApi.getMe().then((response) => {this.setState({displayName: response.display_name, profileImage: response.images[0].url})})
 
           spotifyWebApi.getFollowedArtists({limit:50}) // WHAT IF YOU HAVE MORE THAN 50 FOLLOWED ARTISTS?
@@ -86,10 +79,9 @@ class App extends Component {
   }
 
   requestAuthorization() {
-      console.log("requesting");
+      console.log("requesting authorization");
 
       const client_id = process.env.REACT_APP_SPOTIFY_CLIENT_ID; // client id
-      console.log(client_id);
       const redirect_uri = process.env.REACT_APP_REDIRECT_URI || 'http://localhost:3000'; // redirect uri
 
       var text = '';
@@ -110,6 +102,7 @@ class App extends Component {
       url += '&scope=' + encodeURIComponent(scope);
       url += '&redirect_uri=' + encodeURIComponent(redirect_uri);
       url += '&state=' + encodeURIComponent(state);
+      url += '&show_dialog=' + encodeURIComponent(true);
 
       window.location = url;
   }
@@ -152,48 +145,64 @@ class App extends Component {
 
       return (
         <div className="App">
-            <header className="stickyHeader">
-                <h1 className="header-brand">My Music Timeline</h1>
-                {this.state.nowPlaying.item &&
-                    <div className="now-playing">
-                        <div className="current-art">
-                            <img src={this.state.nowPlaying.item.album.images[0].url} height="60px"></img>
+            {this.state.loggedIn &&
+                <div>
+                <header className="stickyHeader">
+                    <h1 className="header-brand">My Music Timeline</h1>
+                    {this.state.nowPlaying.item &&
+                        <div className="now-playing">
+                            <div className="current-art">
+                                <img src={this.state.nowPlaying.item.album.images[0].url} height="60px"></img>
+                            </div>
+                            <div className="current-track">
+                                <div>{this.state.nowPlaying.item.name}</div>
+                                <div>by {this.state.nowPlaying.item.artists[0].name}</div>
+                            </div>
                         </div>
-                        <div className="current-track">
-                            <div>{this.state.nowPlaying.item.name}</div>
-                            <div>by {this.state.nowPlaying.item.artists[0].name}</div>
-                        </div>
+                    }
+                    <div className="header-profile">
+                        <div className="displayName">{this.state.displayName}</div>
+                        <div className="imageCropper"><img src={this.state.profileImage} height="50px"/></div>
                     </div>
-                }
-                <div className="header-profile">
-                    <div className="displayName">{this.state.displayName}</div>
-                    <div className="imageCropper"><img src={this.state.profileImage} height="50px"/></div>
-                </div>
-            </header>
-            <div className="body">
-                {!this.state.loggedIn &&
-                    /*<a href={"http://localhost:" + BACKEND_PORT + "/login"}>
+                </header>
+                <div className="body">
+                    {!this.state.loggedIn &&
+                        /*<a href={"http://localhost:" + BACKEND_PORT + "/login"}>
+                            <button onClick={this.requestAuthorization}>Login to Spotify</button>
+                        </a>*/
                         <button onClick={this.requestAuthorization}>Login to Spotify</button>
-                    </a>*/
-                    <button onClick={this.requestAuthorization}>Login to Spotify</button>
-                }
-                <InfiniteScroll
-                  dataLength={this.state.loadedReleases.length} //This is important field to render the next data
-                  next={this.fetchData}
-                  hasMore={this.state.hasMore}
-                  loader={<h4>Loading...</h4>}
-                  endMessage={
-                    <p style={{textAlign: 'center'}}>
-                      <b>Yay! You have seen it all</b>
-                    </p>
-                  }>
-                  {releaseList}
-                </InfiniteScroll>
-                {/*releaseList*/}
-            </div>
-            <footer className="stickyFooter">
-                <small>&copy; 2020, Tanner Ropp</small>
-            </footer>
+                    }
+                    <InfiniteScroll
+                      dataLength={this.state.loadedReleases.length} //This is important field to render the next data
+                      next={this.fetchData}
+                      hasMore={this.state.hasMore}
+                      loader={<h4>Loading...</h4>}
+                      endMessage={
+                        <p style={{textAlign: 'center'}}>
+                          <b>Yay! You have seen it all</b>
+                        </p>
+                      }>
+                      {releaseList}
+                    </InfiniteScroll>
+                    {/*releaseList*/}
+                </div>
+                <footer className="stickyFooter">
+                    <small>&copy; 2020, Tanner Ropp</small>
+                </footer>
+                </div>
+            }
+            {!this.state.loggedIn &&
+                <div style={{backgroundColor: "", height: "100vh", position: "fixed", width: "100%"}}>
+                    <div style={{
+                        position: "relative",
+                        top: "50%",
+                        transform: "translateY(-75%)"
+                        }}>
+                        <h1 style={{fontSize: "80px"}}>My Music Timeline</h1>
+                        <button className="login-button" onClick={this.requestAuthorization}>Login with Spotify</button>
+                    </div>
+                </div>
+            }
         </div>
       );
   }
