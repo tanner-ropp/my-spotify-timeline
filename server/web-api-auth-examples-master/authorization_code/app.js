@@ -13,9 +13,9 @@ var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
-var client_id = '38fa2359db88459fb23b71bb3edbf7f1'; // Your client id
-var client_secret = '9b56efd62f6342a3922156846246ba63'; // Your secret
-var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+var client_id = process.env.SPOTIFY_CLIENT_ID; // Your client id
+//var client_secret = process.env.SPOTIFY_CLIENT_SECRET; // Your secret
+var redirect_uri = process.env.REDIRECT_URI || 'http://localhost:8888/callback'; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
@@ -143,5 +143,7 @@ app.get('/refresh_token', function(req, res) {
   });
 });
 
-console.log('Listening on 8888');
-app.listen(8888);
+// console.log('Listening on 8888');
+const PORT = process.env.PORT || 8888;
+console.log('Listening on ' + PORT);
+app.listen(PORT);
