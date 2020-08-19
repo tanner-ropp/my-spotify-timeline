@@ -39,6 +39,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+      console.log(process.env.REACT_APP_SPOTIFY_CLIENT_ID);
       if (this.state.loggedIn) {
           console.log("logged in did mount")
           spotifyWebApi.getMe().then((response) => {this.setState({displayName: response.display_name, profileImage: response.images[0].url})})
