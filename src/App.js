@@ -34,7 +34,7 @@ class App extends Component {
     }
 
     console.log("constructor");
-    console.log(process.env.REACT_APP_SPOTIFY_CLIENT_ID + hhh);
+    console.log(process.env.REACT_APP_SPOTIFY_CLIENT_ID + 'hhh');
     this.fetchData = this.fetchData.bind(this);
     this.tick = this.tick.bind(this);
   }
