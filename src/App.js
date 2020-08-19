@@ -94,7 +94,7 @@ class App extends Component {
       const state = text;
 
       localStorage.setItem('auth_state', state);
-      const scope = 'user-read-private user-read-email';
+      const scope = 'user-read-private user-read-email user-follow-read user-read-playback-state user-modify-playback-state';
 
       var url = 'https://accounts.spotify.com/authorize';
       url += '?response_type=token';
@@ -192,13 +192,13 @@ class App extends Component {
                 </div>
             }
             {!this.state.loggedIn &&
-                <div style={{backgroundColor: "", height: "100vh", position: "fixed", width: "100%"}}>
+                <div style={{backgroundColor: "black", height: "100vh", position: "fixed", width: "100%"}}>
                     <div style={{
                         position: "relative",
                         top: "50%",
                         transform: "translateY(-75%)"
                         }}>
-                        <h1 style={{fontSize: "80px"}}>My Music Timeline</h1>
+                        <h1 style={{fontSize: "80px", color: "white", textShadow: "2px 4px 1px #6EC1FF"}}>My Music Timeline</h1>
                         <button className="login-button" onClick={this.requestAuthorization}>Login with Spotify</button>
                     </div>
                 </div>
