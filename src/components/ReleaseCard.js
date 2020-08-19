@@ -40,7 +40,7 @@ class ReleaseCard extends Component {
         return (
             <div key={track.id} className="track-playbar">
                 <div style={{display: "inline-block", paddingTop: "8px"}}>{track.track_number + ' - ' + track.name}</div>
-                <button onClick={() => spotifyWebApi.play({context_uri : release.uri, offset : {"uri" : track.uri}})}>
+                <button className="play-button" onClick={() => spotifyWebApi.play({context_uri : release.uri, offset : {"uri" : track.uri}})}>
                     <div className="play-symbol"></div>
                 </button>
             </div>
