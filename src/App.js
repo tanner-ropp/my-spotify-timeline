@@ -94,6 +94,7 @@ class App extends Component {
       const state = text;
 
       localStorage.setItem('auth_state', state);
+      localStorage.getItem('auth_state'); // chrome bug, must access local storage for it to persist 
       const scope = 'user-read-private user-read-email user-follow-read user-read-playback-state user-modify-playback-state';
 
       var url = 'https://accounts.spotify.com/authorize';
