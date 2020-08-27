@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import './App.css';
 import Spotify from 'spotify-web-api-js'
 import ReleaseCard from './components/ReleaseCard.js'
+import Modal from './components/Modal.js'
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 const spotifyWebApi = new Spotify();
@@ -36,13 +37,15 @@ class App extends Component {
 
   componentDidMount() {
       if (this.state.loggedIn) {
-          spotifyWebApi.getMe().then((response) => {this.setState({displayName: response.display_name, profileImage: response.images[0].url})})
+          spotifyWebApi.getMe().then((response) => {this.setState({displayName: response.display_name, profileImage: response.images[0].url})});
+
 
           spotifyWebApi.getFollowedArtists({limit:50}) // WHAT IF YOU HAVE MORE THAN 50 FOLLOWED ARTISTS?
           .then((response) => { // waits for artists followed
               /*this.setState({
                   artists : response.artists.items
               });*/
+              //console.log(response);
               return response.artists.items.map((artist) => {return {name : artist.name, id : artist.id}});
           })
           .then((artists) => { // waits for artist id array
@@ -94,7 +97,7 @@ class App extends Component {
       const state = text;
 
       localStorage.setItem('auth_state', state);
-      localStorage.getItem('auth_state'); // chrome bug, must access local storage for it to persist 
+      localStorage.getItem('auth_state'); // chrome bug, must access local storage for it to persist
       const scope = 'user-read-private user-read-email user-follow-read user-read-playback-state user-modify-playback-state';
 
       var url = 'https://accounts.spotify.com/authorize';
@@ -199,11 +202,13 @@ class App extends Component {
                         top: "50%",
                         transform: "translateY(-75%)"
                         }}>
-                        <h1 style={{fontSize: "80px", color: "white", textShadow: "2px 4px 1px #6EC1FF"}}>My Music Timeline</h1>
+                        <h1 style={{fontSize: "80px", color: "white", textShadow: "2px 4px 1px #6EC1FF", lineHeight: "60px"}}>My Music Timeline</h1>
+                        <h1>Never lose track of another release.</h1>
                         <button className="login-button" onClick={this.requestAuthorization}>Login with Spotify</button>
                     </div>
                 </div>
             }
+            <Modal/>
         </div>
       );
   }
