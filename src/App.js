@@ -39,7 +39,6 @@ class App extends Component {
       if (this.state.loggedIn) {
           spotifyWebApi.getMe().then((response) => {this.setState({displayName: response.display_name, profileImage: response.images[0].url})});
 
-
           spotifyWebApi.getFollowedArtists({limit: 50})
           .then((response) => { // waits for artists followed
               const prevResponse = response.artists.items.map((artist) => {return {name : artist.name, id : artist.id}});
