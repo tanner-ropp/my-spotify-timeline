@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import './App.css';
 import Spotify from 'spotify-web-api-js'
 import ReleaseCard from './components/ReleaseCard.js'
+import Modal from './components/Modal.js'
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 const spotifyWebApi = new Spotify();
@@ -23,7 +24,7 @@ class App extends Component {
         hasMore: true,
         nowPlaying: {}
     }
-    console.log("construct");
+
     if (params.access_token && (params.state === localStorage.getItem('auth_state'))) {
         spotifyWebApi.setAccessToken(params.access_token);
         //localStorage.removeItem('auth_state');
@@ -36,14 +37,14 @@ class App extends Component {
 
   componentDidMount() {
       if (this.state.loggedIn) {
-          spotifyWebApi.getMe().then((response) => {this.setState({displayName: response.display_name, profileImage: response.images[0].url})})
+          spotifyWebApi.getMe().then((response) => {this.setState({displayName: response.display_name, profileImage: response.images[0].url})});
 
-          spotifyWebApi.getFollowedArtists({limit:50}) // WHAT IF YOU HAVE MORE THAN 50 FOLLOWED ARTISTS?
+
+          spotifyWebApi.getFollowedArtists({limit: 50})
           .then((response) => { // waits for artists followed
-              /*this.setState({
-                  artists : response.artists.items
-              });*/
-              return response.artists.items.map((artist) => {return {name : artist.name, id : artist.id}});
+              const prevResponse = response.artists.items.map((artist) => {return {name : artist.name, id : artist.id}});
+
+              return this.getNextArtists(prevResponse, response.artists.cursors.after, response.artists.next);
           })
           .then((artists) => { // waits for artist id array
               const artistAlbums = artists.map((artist) => {
@@ -65,6 +66,18 @@ class App extends Component {
           });
       }
       this.checkInterval = setInterval(() => {this.tick()}, 1000);
+  }
+
+  getNextArtists(prevResponse, offsetId, next) {
+      if (next) {
+          return spotifyWebApi.getFollowedArtists({limit: 50, after: offsetId})
+          .then((response) => {
+              const _prevResponse = prevResponse.concat(response.artists.items.map((artist) => {return {name : artist.name, id : artist.id}}));
+              return this.getNextArtists(_prevResponse, response.artists.cursors.after, response.artists.next);
+          })
+      } else { //no more artist pages to call
+          return prevResponse;
+      }
   }
 
   tick() {
@@ -94,7 +107,7 @@ class App extends Component {
       const state = text;
 
       localStorage.setItem('auth_state', state);
-      localStorage.getItem('auth_state'); // chrome bug, must access local storage for it to persist 
+      localStorage.getItem('auth_state'); // chrome bug, must access local storage for it to persist
       const scope = 'user-read-private user-read-email user-follow-read user-read-playback-state user-modify-playback-state';
 
       var url = 'https://accounts.spotify.com/authorize';
@@ -103,7 +116,7 @@ class App extends Component {
       url += '&scope=' + encodeURIComponent(scope);
       url += '&redirect_uri=' + encodeURIComponent(redirect_uri);
       url += '&state=' + encodeURIComponent(state);
-      url += '&show_dialog=' + encodeURIComponent(true);
+      url += '&show_dialog=' + encodeURIComponent(false);
 
       window.location = url;
   }
@@ -113,7 +126,6 @@ class App extends Component {
       this.setState({
           loadedReleases : this.state.loadedReleases.concat(this.state.artistReleases.slice(oldLength, oldLength + 10))
       })
-      console.log("FETCH");
   }
 
   getHashParams() { // provided by jmperez
@@ -168,9 +180,6 @@ class App extends Component {
                 </header>
                 <div className="body">
                     {!this.state.loggedIn &&
-                        /*<a href={"http://localhost:" + BACKEND_PORT + "/login"}>
-                            <button onClick={this.requestAuthorization}>Login to Spotify</button>
-                        </a>*/
                         <button onClick={this.requestAuthorization}>Login to Spotify</button>
                     }
                     <InfiniteScroll
@@ -199,11 +208,13 @@ class App extends Component {
                         top: "50%",
                         transform: "translateY(-75%)"
                         }}>
-                        <h1 style={{fontSize: "80px", color: "white", textShadow: "2px 4px 1px #6EC1FF"}}>My Music Timeline</h1>
+                        <h1 style={{fontSize: "80px", color: "white", textShadow: "2px 4px 1px #6EC1FF", lineHeight: "60px"}}>My Music Timeline</h1>
+                        <h1>Never lose track of another release.</h1>
                         <button className="login-button" onClick={this.requestAuthorization}>Login with Spotify</button>
                     </div>
                 </div>
             }
+            <Modal/>
         </div>
       );
   }
