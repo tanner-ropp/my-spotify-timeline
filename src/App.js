@@ -25,7 +25,7 @@ class App extends Component {
         nowPlaying: {}
     }
 
-    if (params.access_token && (params.state === sessionStorage.getItem('auth_state'))) {
+    if (params.access_token && (params.state === window.sessionStorage.getItem('auth_state'))) {
         spotifyWebApi.setAccessToken(params.access_token);
         //localStorage.removeItem('auth_state');
         console.log("Authorization successful!")
@@ -105,8 +105,8 @@ class App extends Component {
 
       const state = text;
 
-      sessionStorage.setItem('auth_state', state);
-      sessionStorage.getItem('auth_state'); // chrome bug, must access local storage for it to persist
+      window.sessionStorage.setItem('auth_state', state);
+      window.sessionStorage.getItem('auth_state'); // chrome bug, must access local storage for it to persist
       const scope = 'user-read-private user-read-email user-follow-read user-read-playback-state user-modify-playback-state';
 
       var url = 'https://accounts.spotify.com/authorize';
