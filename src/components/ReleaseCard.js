@@ -48,8 +48,11 @@ class ReleaseCard extends Component {
                                 var modal = document.getElementById("modal");
                                 modal.style.display = "block";
                             }
+
+                            document.getElementById(track.id).play();
                         })
                     }}>
+                    <audio id={track.id} src={track.preview_url}></audio>
                     <div className="play-symbol"></div>
                 </button>
             </div>
