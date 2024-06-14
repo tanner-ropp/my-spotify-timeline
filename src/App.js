@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
 import Spotify from "spotify-web-api-js";
-import ReleaseCard from "./components/ReleaseCard.js";
+import { ReleaseCard } from "./components/ReleaseCard.js";
 import Modal from "./components/Modal.js";
 import InfiniteScroll from "react-infinite-scroll-component";
 
