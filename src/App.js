@@ -142,7 +142,7 @@ class App extends Component {
   requestAuthorization() {
     console.log("requesting authorization");
 
-    const client_id = process.env.REACT_APP_SPOTIFY_CLIENT_ID; // client id
+    const client_id = "38fa2359db88459fb23b71bb3edbf7f1"; // client id
     const redirect_uri =
       process.env.REACT_APP_REDIRECT_URI || "http://localhost:3000"; // redirect uri
 
